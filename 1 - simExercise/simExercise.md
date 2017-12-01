@@ -6,7 +6,7 @@ November 30, 2017
 
 
 
-In this section, all the libraries used during the project are loaded.
+This section presents all the libraries used during the project.
 
 
 ```r
@@ -19,7 +19,7 @@ library(gridExtra)
 
 In this project the exponential distribution is investigated in R and compared with the Central Limit Theorem.
 
-The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda.
+It can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda.
 
 The objective of this part is to answer the following questions:
 
@@ -74,7 +74,7 @@ The code used to generate the plot is available in the appendix.
 
 ![](simExercise_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
-The first plot (right) shows that the distribution of the ``40000`` samples are **exponential**, regardless of that, the plot on the right shows that the distribution of ``1000`` means of samples of size ``40`` is **approximately normally distributed**. This reinforces the central limit theorem that states that the sample mean is approximately normally distributed.
+The first plot (right) shows that the distribution of the ``40,000`` samples are **exponential**, regardless of that, the plot on the right shows that the distribution of ``1,000`` means of samples of size ``40`` is **approximately normally distributed**. This reinforces the central limit theorem that states that the sample mean is approximately normally distributed.
 
 ## Conclusion
 

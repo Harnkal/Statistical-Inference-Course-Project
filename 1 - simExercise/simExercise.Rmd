@@ -2,9 +2,10 @@
 title: "Statistical Inference - Simulation Exercise"
 author: "Silva, RAFAEL"
 date: "November 30, 2017"
-output: 
-      html_document:
-            keep_md: yes
+output:
+  pdf_document: default
+  html_document:
+    keep_md: yes
 ---
 
 ## Setup
@@ -13,7 +14,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In this section, all the libraries used during the project are loaded.
+This section presents all the libraries used during the project.
 
 ```{r}
 library(ggplot2)
@@ -25,7 +26,7 @@ library(gridExtra)
 
 In this project the exponential distribution is investigated in R and compared with the Central Limit Theorem.
 
-The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda.
+It can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda.
 
 The objective of this part is to answer the following questions:
 
@@ -127,7 +128,7 @@ g4 <- ggplot(aes(x = smus), data = as.data.frame(smus)) +
 grid.arrange(g3, g4, ncol = 2)
 ```
 
-The first plot (right) shows that the distribution of the ```r format(n * ns)``` samples are **exponential**, regardless of that, the plot on the right shows that the distribution of ```r ns``` means of samples of size ```r n``` is **approximately normally distributed**. This reinforces the central limit theorem that states that the sample mean is approximately normally distributed.
+The first plot (right) shows that the distribution of the ```r format(n * ns, big.mark = ",")``` samples are **exponential**, regardless of that, the plot on the right shows that the distribution of ```r format(ns, big.mark = ",", digits = 0)``` means of samples of size ```r n``` is **approximately normally distributed**. This reinforces the central limit theorem that states that the sample mean is approximately normally distributed.
 
 ## Conclusion
 
