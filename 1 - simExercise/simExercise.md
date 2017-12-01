@@ -82,7 +82,7 @@ This exercise studies and confirms some of the aspects of the CLT.
 
 By the answer of the first question, it is clear that the distribution of the sample mean is approximately normal, and its mean approximate the population mean, and its standard error is the standard deviation of the population divided by the square root of the number of samples.
 
-In the second question, it was observed that the distribution of the sample variance is also approximately normal and centered at the population variance.
+In the second question, it was observed that the distribution of the sample variance is also centered at the population variance.
 
 In the third question, it is possible to observe that, regardless of the population distribution, the distribution of the sample means will always be approximately normally distributed.
 
