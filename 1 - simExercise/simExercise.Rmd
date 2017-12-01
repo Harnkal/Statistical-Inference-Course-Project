@@ -19,6 +19,7 @@ This section presents all the libraries used during the project.
 ```{r}
 library(ggplot2)
 library(gridExtra)
+library(grid)
 ```
 
 
@@ -71,7 +72,7 @@ g1 <- ggplot(aes(x = smus), data = as.data.frame(smus)) +
                  linetype = 2, size = 1.5) +
       scale_color_manual(labels = c("Sample Mean", "Theoretical Mean"), 
                          values = c("black", "red")) + 
-      xlab("mean")
+      xlab("mean") + ggtitle("Sample Means vs. Theoretical Mean")
 
 print(g1)
 ```
@@ -101,7 +102,7 @@ g2 <- ggplot(aes(x = svars), data = as.data.frame(svars)) +
                  linetype = 2, size = 1.5) +
       scale_color_manual(labels = c("Sample Variance", "Theoretical Variance"), 
                          values = c("black", "red")) + 
-      xlab("variance")
+      xlab("variance") + ggtitle("Sample Variance vs. Theoretical Variance")
 
 print(g2)
 ```
@@ -121,10 +122,10 @@ samp1 <- as.vector(samples)
 ## Ploting
 g3 <- ggplot(aes(x = samp1), data = as.data.frame(samp1)) + 
       geom_histogram(col = "black", fill = "lightblue", binwidth = 3) +
-      xlab("sample")
+      xlab("sample") + ggtitle("Exponential Distribution")
 g4 <- ggplot(aes(x = smus), data = as.data.frame(smus)) +
       geom_histogram(col = "black", fill = "coral", binwidth = 0.5) +
-      xlab("sample means") + ylab("")
+      xlab("sample means") + ylab("") + ggtitle("Sample Means Distribution")
 grid.arrange(g3, g4, ncol = 2)
 ```
 
@@ -136,7 +137,7 @@ This exercise studies and confirms some of the aspects of the CLT.
 
 By the answer of the first question, it is clear that the distribution of the sample mean is approximately normal, and its mean approximate the population mean, and its standard error is the standard deviation of the population divided by the square root of the number of samples.
 
-In the second question, it was observed that the distribution of the sample variance is also approximately normal and centered at the population variance.
+In the second question, it was observed that the distribution of the sample variance is also centered at the population variance.
 
 In the third question, it is possible to observe that, regardless of the population distribution, the distribution of the sample means will always be approximately normally distributed.
 
