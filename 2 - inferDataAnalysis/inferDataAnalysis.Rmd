@@ -1,0 +1,89 @@
+---
+title: "Statistical Inference - Inferential Data Analysis"
+author: "Silva, RAFAEL"
+date: "December 4, 2017"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document: default
+---
+
+## Setup
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This section presents all the libraries used during the project.
+
+```{r, message=FALSE}
+library(datasets)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+```
+
+## Introduction
+
+The objective of this project is to make some inferences about the length variation on each supplement and dose on the ToothGrowth data from the R datasets package. The análysis is going to follow the four steps below:
+
+1. Exploratory data analysis and summary;
+1. Hypothesis testing;
+1. Conclusions and assumptions.
+
+The chunk bellow is used to read the data set into the workspace.
+
+```{r}
+data("ToothGrowth")
+```
+
+For more information on the data set (description, dimensions, variables and source) enter ?ToothGrowth on the console to check its documentation.
+
+## Exploratory analysis
+
+To start the analysis, a brief verification on how the dataset looks like is necessary.
+
+```{r}
+dim(ToothGrowth)
+```
+
+```{r}
+head(ToothGrowth)
+```
+
+As the outputs above show, the data set has 60 observations on 3 variables. As the instroduction chapter states, the objective is to make some inferences about the length variation on each supplement and dose. The boxplot below gives a feeling about how each combination affects the length.
+
+```{r}
+ToothGrowth <- ToothGrowth %>%
+      mutate(suppDose = paste(supp, format(dose, digits = 2), sep = "/"))
+
+g1 <- ggplot(ToothGrowth, aes(x = suppDose, y = len)) + 
+      geom_boxplot() + 
+      labs(title = "Length by Supplement and Dose", 
+           x = "Supplement/Dose", y = "Length")
+
+print(g1)
+```
+
+It is important to notice that, in the graph above, the x axis does not present a continuous scale. This means that when analysing the graph you should not look at how the length increase "evolve" through the doses but at how each group behave in the y scale.
+
+In the table below, the main statistical attributes of each group are summarized.
+
+```{r, fig.width=5, fig.height=3}
+summ <- ToothGrowth %>%
+      group_by(suppDose) %>%
+      summarise(min = min(len),
+                q1 = quantile(len, .25),
+                mean = mean(len), 
+                median = median(len),
+                q3 = quantile(len, .75),
+                max = max(len),
+                variance = var(len), 
+                n = length(len))
+
+kable(summ, caption = "Data Summary by Supplement and Dose", 
+      col.names = c("Supp/Dose", "Min", "1st Qu.", "Mean", "Median", "3rd Qu.",
+                    "Max", "Variance", "n"))
+```
+
+Continue...

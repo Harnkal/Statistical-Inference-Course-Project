@@ -14,7 +14,6 @@ library(ggplot2)
 library(gridExtra)
 ```
 
-
 ## Introduction
 
 In this project the exponential distribution is investigated in R and compared with the Central Limit Theorem.
