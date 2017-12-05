@@ -13,6 +13,7 @@ This section presents all the libraries used during the project.
 library(datasets)
 library(ggplot2)
 library(dplyr)
+library(tidyr)
 library(knitr)
 ```
 
@@ -76,7 +77,7 @@ g1 <- ggplot(ToothGrowth, aes(x = suppDose, y = len)) +
 print(g1)
 ```
 
-![](inferDataAnalysis_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![](inferDataAnalysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 It is important to notice that, in the graph above, the x axis does not present a continuous scale. This means that when analysing the graph you should not look at how the length increase "evolve" through the doses but at how each group behave in the y scale.
 
@@ -92,7 +93,7 @@ summ <- ToothGrowth %>%
                 median = median(len),
                 q3 = quantile(len, .75),
                 max = max(len),
-                variance = var(len), 
+                variance = round(var(len),3), 
                 n = length(len))
 
 kable(summ, caption = "Data Summary by Supplement and Dose", 
@@ -104,13 +105,39 @@ kable(summ, caption = "Data Summary by Supplement and Dose",
 
 Table: Data Summary by Supplement and Dose
 
-Supp/Dose     Min   1st Qu.    Mean   Median   3rd Qu.    Max    Variance    n
-----------  -----  --------  ------  -------  --------  -----  ----------  ---
-OJ/0.5        8.2     9.700   13.23    12.25    16.175   21.5   19.889000   10
-OJ/1.0       14.5    20.300   22.70    23.45    25.650   27.3   15.295556   10
-OJ/2.0       22.4    24.575   26.06    25.95    27.075   30.9    7.049333   10
-VC/0.5        4.2     5.950    7.98     7.15    10.900   11.5    7.544000   10
-VC/1.0       13.6    15.275   16.77    16.50    17.300   22.5    6.326778   10
-VC/2.0       18.5    23.375   26.14    25.95    28.800   33.9   23.018222   10
+Supp/Dose     Min   1st Qu.    Mean   Median   3rd Qu.    Max   Variance    n
+----------  -----  --------  ------  -------  --------  -----  ---------  ---
+OJ/0.5        8.2     9.700   13.23    12.25    16.175   21.5     19.889   10
+OJ/1.0       14.5    20.300   22.70    23.45    25.650   27.3     15.296   10
+OJ/2.0       22.4    24.575   26.06    25.95    27.075   30.9      7.049   10
+VC/0.5        4.2     5.950    7.98     7.15    10.900   11.5      7.544   10
+VC/1.0       13.6    15.275   16.77    16.50    17.300   22.5      6.327   10
+VC/2.0       18.5    23.375   26.14    25.95    28.800   33.9     23.018   10
 
-Continue...
+With the summary presented above, it is possible to manualy calculate the confidence interval for all the groups, besides that, it is also possible to perform an equivalence test on each combination. However, R provides a usefull tool to test the equivalence of each group combination, this is what will be covered in the next section.
+
+## Hypothesis test
+
+In this section, each group combination will go through a t.test. The aim is to test for H*subscript*0*subscript*: $mu$*subscript*X*subscript* = $mu$*subscript*Y*subscript*. The code below performs a two sided test on the differences of each group combination, the 95% confidence interval of each test is extracted and organized in a table for further analysis.
+
+
+```r
+suppDose <- unique(ToothGrowth$suppDose)
+testTable <- data.frame(suppDose1 = rep(suppDose, each = length(suppDose)),
+                        suppDose2 = rep(suppDose, times = length(suppDose)))
+testTable$confInt <- NA
+
+for(i in 1:nrow(testTable)) {
+      x = ToothGrowth$len[ToothGrowth$suppDose == testTable$suppDose1[i]]
+      y = ToothGrowth$len[ToothGrowth$suppDose == testTable$suppDose2[i]]
+      confInt <- round(t.test(x, y, var.equal = TRUE)$conf, 2)
+      testTable$confInt[i] <- paste(confInt[1], confInt[2], sep = "  _  ")
+}
+
+testTable <- testTable %>%
+      spread(suppDose2, confInt)
+
+row.names(testTable) <- testTable$suppDose1
+
+testTable <- testTable[, 2:7]
+```

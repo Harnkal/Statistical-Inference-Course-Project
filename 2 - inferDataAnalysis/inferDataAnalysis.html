@@ -129,6 +129,7 @@ $(document).ready(function () {
 <pre class="r"><code>library(datasets)
 library(ggplot2)
 library(dplyr)
+library(tidyr)
 library(knitr)</code></pre>
 </div>
 <div id="introduction" class="section level2">
@@ -177,7 +178,7 @@ print(g1)</code></pre>
                 median = median(len),
                 q3 = quantile(len, .75),
                 max = max(len),
-                variance = var(len), 
+                variance = round(var(len),3), 
                 n = length(len))
 
 kable(summ, caption = &quot;Data Summary by Supplement and Dose&quot;, 
@@ -207,7 +208,7 @@ kable(summ, caption = &quot;Data Summary by Supplement and Dose&quot;,
 <td align="right">12.25</td>
 <td align="right">16.175</td>
 <td align="right">21.5</td>
-<td align="right">19.889000</td>
+<td align="right">19.889</td>
 <td align="right">10</td>
 </tr>
 <tr class="even">
@@ -218,7 +219,7 @@ kable(summ, caption = &quot;Data Summary by Supplement and Dose&quot;,
 <td align="right">23.45</td>
 <td align="right">25.650</td>
 <td align="right">27.3</td>
-<td align="right">15.295556</td>
+<td align="right">15.296</td>
 <td align="right">10</td>
 </tr>
 <tr class="odd">
@@ -229,7 +230,7 @@ kable(summ, caption = &quot;Data Summary by Supplement and Dose&quot;,
 <td align="right">25.95</td>
 <td align="right">27.075</td>
 <td align="right">30.9</td>
-<td align="right">7.049333</td>
+<td align="right">7.049</td>
 <td align="right">10</td>
 </tr>
 <tr class="even">
@@ -240,7 +241,7 @@ kable(summ, caption = &quot;Data Summary by Supplement and Dose&quot;,
 <td align="right">7.15</td>
 <td align="right">10.900</td>
 <td align="right">11.5</td>
-<td align="right">7.544000</td>
+<td align="right">7.544</td>
 <td align="right">10</td>
 </tr>
 <tr class="odd">
@@ -251,7 +252,7 @@ kable(summ, caption = &quot;Data Summary by Supplement and Dose&quot;,
 <td align="right">16.50</td>
 <td align="right">17.300</td>
 <td align="right">22.5</td>
-<td align="right">6.326778</td>
+<td align="right">6.327</td>
 <td align="right">10</td>
 </tr>
 <tr class="even">
@@ -262,12 +263,34 @@ kable(summ, caption = &quot;Data Summary by Supplement and Dose&quot;,
 <td align="right">25.95</td>
 <td align="right">28.800</td>
 <td align="right">33.9</td>
-<td align="right">23.018222</td>
+<td align="right">23.018</td>
 <td align="right">10</td>
 </tr>
 </tbody>
 </table>
-<p>Continue…</p>
+<p>With the summary presented above, it is possible to manualy calculate the confidence interval for all the groups, besides that, it is also possible to perform an equivalence test on each combination. However, R provides a usefull tool to test the equivalence of each group combination, this is what will be covered in the next section.</p>
+</div>
+<div id="hypothesis-test" class="section level2">
+<h2>Hypothesis test</h2>
+<p>In this section, each group combination will go through a t.test. The aim is to test for H<em>subscript</em>0<em>subscript</em>: <span class="math inline">\(mu\)</span><em>subscript</em>X<em>subscript</em> = <span class="math inline">\(mu\)</span><em>subscript</em>Y<em>subscript</em>. The code below performs a two sided test on the differences of each group combination, the 95% confidence interval of each test is extracted and organized in a table for further analysis.</p>
+<pre class="r"><code>suppDose &lt;- unique(ToothGrowth$suppDose)
+testTable &lt;- data.frame(suppDose1 = rep(suppDose, each = length(suppDose)),
+                        suppDose2 = rep(suppDose, times = length(suppDose)))
+testTable$confInt &lt;- NA
+
+for(i in 1:nrow(testTable)) {
+      x = ToothGrowth$len[ToothGrowth$suppDose == testTable$suppDose1[i]]
+      y = ToothGrowth$len[ToothGrowth$suppDose == testTable$suppDose2[i]]
+      confInt &lt;- round(t.test(x, y, var.equal = TRUE)$conf, 2)
+      testTable$confInt[i] &lt;- paste(confInt[1], confInt[2], sep = &quot;  _  &quot;)
+}
+
+testTable &lt;- testTable %&gt;%
+      spread(suppDose2, confInt)
+
+row.names(testTable) &lt;- testTable$suppDose1
+
+testTable &lt;- testTable[, 2:7]</code></pre>
 </div>
 
 

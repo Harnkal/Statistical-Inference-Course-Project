@@ -20,6 +20,7 @@ This section presents all the libraries used during the project.
 library(datasets)
 library(ggplot2)
 library(dplyr)
+library(tidyr)
 library(knitr)
 ```
 
@@ -78,7 +79,7 @@ summ <- ToothGrowth %>%
                 median = median(len),
                 q3 = quantile(len, .75),
                 max = max(len),
-                variance = var(len), 
+                variance = round(var(len),3), 
                 n = length(len))
 
 kable(summ, caption = "Data Summary by Supplement and Dose", 
@@ -86,4 +87,29 @@ kable(summ, caption = "Data Summary by Supplement and Dose",
                     "Max", "Variance", "n"))
 ```
 
-Continue...
+With the summary presented above, it is possible to manualy calculate the confidence interval for all the groups, besides that, it is also possible to perform an equivalence test on each combination. However, R provides a usefull tool to test the equivalence of each group combination, this is what will be covered in the next section.
+
+## Hypothesis test
+
+In this section, each group combination will go through a t.test. The aim is to test for H*subscript*0*subscript*: $mu$*subscript*X*subscript* = $mu$*subscript*Y*subscript*. The code below performs a two sided test on the differences of each group combination, the 95% confidence interval of each test is extracted and organized in a table for further analysis.
+
+```{r}
+suppDose <- unique(ToothGrowth$suppDose)
+testTable <- data.frame(suppDose1 = rep(suppDose, each = length(suppDose)),
+                        suppDose2 = rep(suppDose, times = length(suppDose)))
+testTable$confInt <- NA
+
+for(i in 1:nrow(testTable)) {
+      x = ToothGrowth$len[ToothGrowth$suppDose == testTable$suppDose1[i]]
+      y = ToothGrowth$len[ToothGrowth$suppDose == testTable$suppDose2[i]]
+      confInt <- round(t.test(x, y, var.equal = TRUE)$conf, 2)
+      testTable$confInt[i] <- paste(confInt[1], confInt[2], sep = "  _  ")
+}
+
+testTable <- testTable %>%
+      spread(suppDose2, confInt)
+
+row.names(testTable) <- testTable$suppDose1
+
+testTable <- testTable[, 2:7]
+```
