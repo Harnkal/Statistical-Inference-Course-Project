@@ -3,9 +3,9 @@ title: "Statistical Inference - Inferential Data Analysis"
 author: "Silva, RAFAEL"
 date: "December 4, 2017"
 output:
+  pdf_document: default
   html_document:
     keep_md: yes
-  pdf_document: default
 ---
 
 ## Setup
@@ -29,7 +29,7 @@ library(knitr)
 The objective of this project is to make some inferences about the length variation on each supplement and dose on the ToothGrowth data from the R datasets package. The análysis is going to follow the four steps below:
 
 1. Exploratory data analysis and summary;
-1. Hypothesis testing;
+1. Confidence intervals;
 1. Conclusions and assumptions.
 
 The chunk bellow is used to read the data set into the workspace.
@@ -52,64 +52,56 @@ dim(ToothGrowth)
 head(ToothGrowth)
 ```
 
-As the outputs above show, the data set has 60 observations on 3 variables. As the instroduction chapter states, the objective is to make some inferences about the length variation on each supplement and dose. The boxplot below gives a feeling about how each combination affects the length.
+As the outputs above show, the data set has 60 observations on 3 variables. As the instroduction chapter states, the objective is to make some inferences about the length variation on each supplement and dose. The boxplot below gives a feeling about how each combination affects the length variable.
 
-```{r}
-ToothGrowth <- ToothGrowth %>%
-      mutate(suppDose = paste(supp, format(dose, digits = 2), sep = "/"))
-
-g1 <- ggplot(ToothGrowth, aes(x = suppDose, y = len)) + 
+```{r, fig.width= 7, fig.height=4.2, fig.align="center"}
+ggplot(ToothGrowth, aes(x = interaction(supp, dose), y = len)) + 
       geom_boxplot() + 
-      labs(title = "Length by Supplement and Dose", 
-           x = "Supplement/Dose", y = "Length")
-
-print(g1)
+      labs(title = "Length by supplement and dose", 
+           x = "Supplement.Dose", y = "Length")
 ```
-
-It is important to notice that, in the graph above, the x axis does not present a continuous scale. This means that when analysing the graph you should not look at how the length increase "evolve" through the doses but at how each group behave in the y scale.
 
 In the table below, the main statistical attributes of each group are summarized.
 
-```{r, fig.width=5, fig.height=3}
+```{r}
 summ <- ToothGrowth %>%
+      mutate(suppDose = interaction(supp, dose))%>%
       group_by(suppDose) %>%
-      summarise(min = min(len),
-                q1 = quantile(len, .25),
-                mean = mean(len), 
+      summarise(mean = mean(len), 
                 median = median(len),
-                q3 = quantile(len, .75),
-                max = max(len),
                 variance = round(var(len),3), 
                 n = length(len))
 
 kable(summ, caption = "Data Summary by Supplement and Dose", 
-      col.names = c("Supp/Dose", "Min", "1st Qu.", "Mean", "Median", "3rd Qu.",
-                    "Max", "Variance", "n"))
+      col.names = c("Supp/Dose", "Mean", "Median", "Variance", "n"))
 ```
 
-With the summary presented above, it is possible to manualy calculate the confidence interval for all the groups, besides that, it is also possible to perform an equivalence test on each combination. However, R provides a usefull tool to test the equivalence of each group combination, this is what will be covered in the next section.
+With the summary presented above, it is possible to manualy calculate the confidence interval (Z or T) for all the groups, besides that, it is also possible to perform an equivalence test on each combination.
 
 ## Hypothesis test
 
-In this section, each group combination will go through a t.test. The aim is to test for H*subscript*0*subscript*: $mu$*subscript*X*subscript* = $mu$*subscript*Y*subscript*. The code below performs a two sided test on the differences of each group combination, the 95% confidence interval of each test is extracted and organized in a table for further analysis.
+In this section, each group will have it's confidence intervals calculated and ploted along with its mean. The coonfidence intervals are represented by the lines and the means by the dots.
 
-```{r}
-suppDose <- unique(ToothGrowth$suppDose)
-testTable <- data.frame(suppDose1 = rep(suppDose, each = length(suppDose)),
-                        suppDose2 = rep(suppDose, times = length(suppDose)))
-testTable$confInt <- NA
+```{r, fig.width=7, fig.height=3, fig.align="center"}
+results <- summ %>%
+      mutate(lowerCI = mean - qt(.975, n-1) * sqrt(variance/n),
+             upperCI = mean + qt(.975, n-1) * sqrt(variance/n)) %>%
+      select(c("suppDose", "mean", "lowerCI", "upperCI")) %>%
+      gather(lowUP, confInt, c("lowerCI", "upperCI"))
 
-for(i in 1:nrow(testTable)) {
-      x = ToothGrowth$len[ToothGrowth$suppDose == testTable$suppDose1[i]]
-      y = ToothGrowth$len[ToothGrowth$suppDose == testTable$suppDose2[i]]
-      confInt <- round(t.test(x, y, var.equal = TRUE)$conf, 2)
-      testTable$confInt[i] <- paste(confInt[1], confInt[2], sep = "  _  ")
-}
+ggplot(results) +
+      geom_line(aes(y = suppDose, x = confInt, group = suppDose)) +
+      geom_point(aes(y = suppDose, x = mean)) +
+      labs(x = "Confidence Interval", y = "Supplement.Dose", 
+           title = "Supplement and dose confidence intervals") +
+      theme_bw()
 
-testTable <- testTable %>%
-      spread(suppDose2, confInt)
-
-row.names(testTable) <- testTable$suppDose1
-
-testTable <- testTable[, 2:7]
 ```
+
+## Conclusion
+
+By looking at the plot on the last section, it is possible to make some assumptions about the data:
+
+1. Reject for H~0~:$\mu$~OJ.0.5~=$\mu$~VC.0.5~;
+1. Reject for H~0~:$\mu$~OJ.1~=$\mu$~VC.1~;
+1. Fail to reject for H~0~:$\mu$~OJ.2~=$\mu$~VC.2~.
