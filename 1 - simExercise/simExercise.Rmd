@@ -107,7 +107,7 @@ print(g2)
 
 Once again, as the plot shows, the center of the **distribution of the sample variances (```r round(svar, 2)```)** lies very close to the **theoretical variance (```r round(tvar, 2)```)**.
 
-## Distribution comparisson
+## 3. Distribution comparisson
 
 Finally, the third question is answered by the double panel plot bellow.
 

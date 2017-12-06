@@ -49,7 +49,7 @@ To answer the first question the mean of each simulation was calculated and the 
 
 The code used to generate the plot is available in the appendix.
 
-![](simExercise_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+![](simExercise_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
 
 As the plot shows, that the center of the **distribution of sample means** is **``5.02``**, and is fairly close to the **theoretical mean** of the distribution which is **``5``**.
 
@@ -61,17 +61,17 @@ For the second question, the same strategy is used, however, instead of extracti
 
 The code used to generate the plot is available in the appendix.
 
-![](simExercise_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+![](simExercise_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
 Once again, as the plot shows, the center of the **distribution of the sample variances (``25.24``)** lies very close to the **theoretical variance (``25``)**.
 
-## Distribution comparisson
+## 3. Distribution comparisson
 
 Finally, the third question is answered by the double panel plot bellow.
 
 The code used to generate the plot is available in the appendix.
 
-![](simExercise_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![](simExercise_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
 The first plot (right) shows that the distribution of the ``40,000`` samples are **exponential**, regardless of that, the plot on the right shows that the distribution of ``1,000`` means of samples of size ``40`` is **approximately normally distributed**. This reinforces the central limit theorem that states that the sample mean is approximately normally distributed.
 
